@@ -7,10 +7,14 @@ interface Props {
 
 export interface UIState {
     sidemenuOpen: boolean;
+    isAddingEntry: boolean;
+    isDraggingItem: boolean;
 }
 
 const UI_INITIAL_STATE: UIState = {
     sidemenuOpen: false,
+    isAddingEntry: false,
+    isDraggingItem: false
 }
 
 export const UIProvider:FC<Props> = ({ children }) => {
@@ -25,11 +29,24 @@ export const UIProvider:FC<Props> = ({ children }) => {
         dispatch({ type: '[UI] - Close Sidebar' });
     }
 
+    const setIsAddingEntry = ( isAdding: boolean ) => {
+        dispatch({ type: '[UI] - Set isAddingEntry', payload: isAdding });
+    }
+
+    const setIsDraggingItem = ( isDragging: boolean ) => {
+        dispatch({ type: '[UI] - Set isDraggingItem', payload: isDragging });
+    }
+
     return (
         <UIContext.Provider value={{
             ...state,
+            
             openSideMenu,
-            closeSideMenu
+            closeSideMenu,
+            
+            setIsAddingEntry,
+
+            setIsDraggingItem
         }}>
             { children }
         </UIContext.Provider>

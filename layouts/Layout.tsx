@@ -16,7 +16,7 @@ export const Layout:FC<Props> = ({ title = 'OpenJira - App', children }) => {
             </Head>
             <NavBar/>
             <Sidebar />
-            <Box sx={{ padding: '40px', height: 'calc(100vh - 65px)' }}>
+            <Box sx={{ padding: '40px' }}>
                 { children }
             </Box>
         </Box>
