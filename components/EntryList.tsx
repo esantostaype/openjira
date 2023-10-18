@@ -1,5 +1,5 @@
 import { DragEvent, FC, useContext, useMemo } from 'react';
-import { List, Paper, Typography } from '@mui/material';
+import { List } from '@mui/material';
 import { EntryItem } from './';
 import { EntryStatus } from '../interfaces';
 import { EntriesContext } from '../context/entries';
@@ -35,11 +35,12 @@ export const EntryList:FC<Props> = ({ status }) => {
             className= { isDraggingItem ? 'dragging' : '' }
         >
             <List sx={{ padding: 0, marginTop: -1, marginBottom: -2, minHeight: '100px' }}>
-                {
-                    entriesByStatus.map( entry => (
-                        <EntryItem key={ entry._id } entry={ entry } />
-                    ) )
-                }
+                    {
+                        entriesByStatus.map( entry => (
+                            <EntryItem  key={ entry._id} entry={ entry } />
+                            
+                        ) )
+                    }
             </List>
         </div>
     )

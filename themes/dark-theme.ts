@@ -1,10 +1,14 @@
 import { createTheme } from '@mui/material'
+import { red } from '@mui/material/colors'
 
 export const darkTheme = createTheme({
 	palette: {
 		mode: 'dark',
 		background: {
 			default: 'rgb(16, 20, 24)',
+		},
+		error: {
+			main: red.A400
 		}
 	},
 
@@ -33,7 +37,7 @@ export const darkTheme = createTheme({
 		MuiCard: {
 			styleOverrides: {
 				root: {
-					backgroundColor: 'rgba(0, 0, 0, 0.2)'
+					backgroundColor: 'rgba(0, 0, 0, 0.08)'
 				}
 			}
 		},
@@ -43,6 +47,17 @@ export const darkTheme = createTheme({
 					borderStyle: 'solid',
 					borderColor: 'rgba(194, 224, 255, 0.08)',
 					borderWidth: '0px 0px thin',
+					fontSize: '1rem'
+				},
+				
+			}
+		},
+		MuiCardActions: {
+			styleOverrides: {
+				root: {
+					borderStyle: 'solid',
+					borderColor: 'rgba(194, 224, 255, 0.08)',
+					borderWidth: 'thin 0px 0px',
 					fontSize: '1rem'
 				},
 				

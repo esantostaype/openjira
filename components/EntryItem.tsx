@@ -1,4 +1,5 @@
 import { DragEvent, FC, useContext } from "react";
+import { useRouter } from "next/router";
 import { Card, CardActionArea, CardActions, CardContent, ListItem, Typography } from "@mui/material"
 import { Entry } from "../interfaces"
 import { UIContext } from "../context/ui";
@@ -9,7 +10,9 @@ interface Props {
 
 export const EntryItem:FC<Props> = ({ entry }) => {
 
-    const { isDraggingItem, setIsDraggingItem } = useContext( UIContext )
+    const { setIsDraggingItem } = useContext( UIContext )
+
+    const router = useRouter();
 
     const onDragStart = ( event: DragEvent ) => {
         console.log(event)
@@ -21,6 +24,10 @@ export const EntryItem:FC<Props> = ({ entry }) => {
         setIsDraggingItem( false );
     }
 
+    const onClick = () => {
+        router.push( `/entries/${ entry._id }` );
+    }
+
     return (
         <ListItem
             sx={{ padding: 0, paddingBottom: 1, paddingTop: 1 }}
@@ -28,7 +35,7 @@ export const EntryItem:FC<Props> = ({ entry }) => {
             onDragStart={ onDragStart }
             onDragEnd={ onDragEnd }
         >
-            <Card sx={{ minWidth: '100%' }}>
+            <Card sx={{ minWidth: '100%' }} onClick={ onClick }>
                 <CardActionArea>
                     <CardContent>
                         <Typography sx={{ whiteSpace: 'pre-line' }}>{ entry.description }</Typography>

@@ -29,6 +29,23 @@ export default function handler( req: NextApiRequest, res: NextApiResponse<Data>
 
 }
 
+const getEntry = async( req: NextApiRequest, res: NextApiResponse<Data> ) => {
+
+    const { id } = req.query;
+
+    await db.connect();
+
+    const entryToGet = await Entry.findById( id );
+
+    await db.disconnect();
+
+    if ( !entryToGet ) {
+        return res.status(400).json({ message: 'No hay entrada con ese ID: ' + id })
+    }
+    
+    return res.status(200).json( entryToGet );
+}
+
 const updateEntry = async( req: NextApiRequest, res: NextApiResponse<Data> ) => {
 
     const { id } = req.query;
@@ -58,21 +75,4 @@ const updateEntry = async( req: NextApiRequest, res: NextApiResponse<Data> ) => 
         await db.disconnect();
         res.status(400).json({ message: error.errors.status.message });
     }
-}
-
-const getEntry = async( req: NextApiRequest, res: NextApiResponse<Data> ) => {
-
-    const { id } = req.query;
-
-    await db.connect();
-
-    const entryToGet = await Entry.findById( id );
-
-    await db.disconnect();
-
-    if ( !entryToGet ) {
-        return res.status(400).json({ message: 'No hay entrada con ese ID: ' + id })
-    }
-    
-    return res.status(200).json( entryToGet );
 }
