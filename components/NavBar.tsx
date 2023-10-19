@@ -16,7 +16,7 @@ export const NavBar = () => {
                 </IconButton>
                 <Link href='/' passHref>
                     <Typography variant='h6'>OpenJira</Typography>
-                </Link>                
+                </Link>
             </Toolbar>        
         </AppBar>
     )

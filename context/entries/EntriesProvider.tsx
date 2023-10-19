@@ -13,6 +13,7 @@ export interface EntriesState {
     entries: Entry[];
 }
 
+
 const ENTRIES_INITIAL_STATE: EntriesState = {
     entries: [],
 }
@@ -25,16 +26,24 @@ export const EntriesProvider:FC<Props> = ({ children }) => {
 
     const { enqueueSnackbar } = useSnackbar();
 
-    const addNewEntry = async( description: string ) => {
-        const { data } = await entriesApi.post<Entry>('/entries', { description });
+    const addNewEntry = async( { title, description }: Entry ) => {
+        const { data } = await entriesApi.post<Entry>('/entries', { title, description });
         dispatch({ type: '[Entry] - Add Entry', payload: data });
+        enqueueSnackbar( "Entry Created Successfully", {
+            variant: 'success',
+            autoHideDuration: 1500,
+            anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right'
+            }
+        } );
     }
 
-    const updateEntry = async( { _id, description, status }: Entry ) => {
+    const updateEntry = async( { _id, title, description, status }: Entry ) => {
         try {
-            const { data } = await entriesApi.put<Entry>(`/entries/${ _id }`, { description, status  });
+            const { data } = await entriesApi.put<Entry>(`/entries/${ _id }`, { title, description, status  });
             dispatch({ type: '[Entry] - Update Entry', payload: data });
-            enqueueSnackbar( `Entry "${description.substring( 0,20 ) + '...'}" Updated Successfully`, {
+            enqueueSnackbar( `Entry Updated Successfully`, {
                 variant: 'success',
                 autoHideDuration: 1500,
                 anchorOrigin: {
@@ -48,6 +57,26 @@ export const EntriesProvider:FC<Props> = ({ children }) => {
             console.log({ error });
         }
         
+    }
+
+    const deleteEntry = async( _id: string ) => {
+        try {
+            const { data } = await entriesApi.delete<Entry>(`/entries/${ _id }`);
+            dispatch({ type: '[Entry] - Update Entry', payload: data });
+            enqueueSnackbar( `Entry Deleted Successfully`, {
+                variant: 'success',
+                autoHideDuration: 1500,
+                anchorOrigin: {
+                    vertical: 'top',
+                    horizontal: 'right'
+                }
+            } );
+            getEntries();
+            router.push( `/` );
+        }
+        catch( error ) {
+            console.log({ error });
+        }
     }
 
     const getEntries = async() => {
@@ -64,7 +93,8 @@ export const EntriesProvider:FC<Props> = ({ children }) => {
         <EntriesContext.Provider value={{
             ...state,
             addNewEntry,
-            updateEntry
+            updateEntry,
+            deleteEntry
         }}>
             { children }
         </EntriesContext.Provider>

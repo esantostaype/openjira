@@ -1,12 +1,13 @@
 import { ChangeEvent, useState, useMemo, FC, useContext } from 'react';
 import { Layout } from '../../layouts';
-import { Card, CardHeader, CardContent, capitalize, Grid, TextField, CardActions, Button, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, IconButton } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions ,Card, CardHeader, CardContent, capitalize, Grid, TextField, CardActions, Button, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, IconButton } from '@mui/material';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { Entry, EntryStatus } from '../../interfaces';
 import { GetServerSideProps } from 'next';
 import { dbEntries } from '../../database';
 import { EntriesContext } from '../../context/entries';
+import { dateFunctions } from '../../utils';
 
 const validStatus: EntryStatus[] = [ 'pending', 'in-progress', 'finished' ];
 
@@ -16,11 +17,14 @@ interface Props {
 
 export const EntryPage:FC<Props> = ({ entry }) => {
 
-    const { updateEntry } = useContext( EntriesContext )
+    const { updateEntry } = useContext( EntriesContext );
+
+    const { deleteEntry } = useContext( EntriesContext );
 
     const [ inputValue , setInputValue ] = useState( entry.description );
     const [ status, setStatus ] = useState<EntryStatus>( entry.status );
     const [ touched, setTouched ] = useState( false );
+    const [ isModalOpen, setIsModalOpen ] = useState( false );
 
     const isNotValid = useMemo(() => inputValue.length <= 0 && touched, [ inputValue, touched ])
 
@@ -44,6 +48,10 @@ export const EntryPage:FC<Props> = ({ entry }) => {
         updateEntry( updatedEntry );
     }
 
+    const onDelete = () => {
+        deleteEntry( entry._id );
+    }
+
     // const onCancel = () => {
     //     setInputValue( '' );
     //     setStatus( 'pending' );
@@ -60,7 +68,7 @@ export const EntryPage:FC<Props> = ({ entry }) => {
                 <Grid item xs={ 12 } sm={ 8 } md={ 6 }>
                     <Card sx={{ position: 'relative' }} variant="outlined">
                         <CardHeader
-                            title={`Entry: ${ inputValue }`} subheader={ `Created 5 minutes ago` } sx={{ padding: 3 }}
+                            title={`Entry: ${ inputValue }`} subheader={ dateFunctions.getFormatDistanceToNow( entry.createdAt ) } sx={{ padding: 3 }}
                         />
                         <CardContent sx={{ padding: 3 }}>
                             <TextField
@@ -97,7 +105,7 @@ export const EntryPage:FC<Props> = ({ entry }) => {
                     </Card>
                 </Grid>
             </Grid>  
-            <IconButton sx={{
+            <IconButton onClick={ onDelete } sx={{
                 backgroundColor: 'error.dark',
                 position: 'fixed',
                 bottom: 30,
@@ -106,7 +114,7 @@ export const EntryPage:FC<Props> = ({ entry }) => {
                 width: 48
             }}>
                 <DeleteOutlinedIcon fontSize='medium' />
-            </IconButton>          
+            </IconButton>
         </Layout>
     )
 }

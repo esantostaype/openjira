@@ -17,11 +17,14 @@ export default function handler( req: NextApiRequest, res: NextApiResponse<Data>
 
     switch( req.method ){
 
+        case 'GET':
+            return getEntry( req, res )
+
         case 'PUT':
             return updateEntry( req, res )
 
-        case 'GET':
-            return getEntry( req, res )
+        case 'DELETE':
+            return deleteEntry( req, res )
             
         default:
             return res.status(400).json({ message: 'El método no existe.' })
@@ -60,12 +63,13 @@ const updateEntry = async( req: NextApiRequest, res: NextApiResponse<Data> ) => 
     }
 
     const {
+        title = entryToUpdate.title,
         description = entryToUpdate.description,
         status = entryToUpdate.status,
     } = req.body;
 
     try {
-        const updatedEntry = await Entry.findByIdAndUpdate( id, { description, status }, { runValidators: true, new: true });
+        const updatedEntry = await Entry.findByIdAndUpdate( id, { title, description, status }, { runValidators: true, new: true });
         await db.disconnect();
         res.status(200).json( updatedEntry! );
         
@@ -74,5 +78,27 @@ const updateEntry = async( req: NextApiRequest, res: NextApiResponse<Data> ) => 
     catch ( error: any ) {
         await db.disconnect();
         res.status(400).json({ message: error.errors.status.message });
+    }
+}
+
+const deleteEntry = async ( req: NextApiRequest, res: NextApiResponse<Data> ) => {
+    const { id } = req.query;
+
+    try {
+        await db.connect();
+
+        const entryToDelete = await Entry.findByIdAndDelete(id);
+
+        if (!entryToDelete) {
+            await db.disconnect();
+            return res.status(404).json({ message: 'No hay entrada con ese ID: ' + id });
+        }
+
+        await db.disconnect();
+
+        return res.status(204).end();
+    } catch ( error: any ) {
+        await db.disconnect();
+        return res.status(500).json({ message: 'Error al eliminar la entrada: ' + error.message });
     }
 }

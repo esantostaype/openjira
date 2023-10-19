@@ -14,7 +14,7 @@ export const EntryList:FC<Props> = ({ status }) => {
     const { entries, updateEntry } = useContext( EntriesContext );
     const { isDraggingItem, setIsDraggingItem } = useContext( UIContext )
 
-    const entriesByStatus = useMemo( () => entries.filter( entry => entry.status === status ), [ entries ] );
+    const entriesByStatus = useMemo( () => entries.filter( entry => entry.status === status ), [entries, status] );
 
     const allowDrop = ( event: DragEvent<HTMLDivElement> ) => {
         event.preventDefault();
@@ -35,12 +35,12 @@ export const EntryList:FC<Props> = ({ status }) => {
             className= { isDraggingItem ? 'dragging' : '' }
         >
             <List sx={{ padding: 0, marginTop: -1, marginBottom: -2, minHeight: '100px' }}>
-                    {
-                        entriesByStatus.map( entry => (
-                            <EntryItem  key={ entry._id} entry={ entry } />
-                            
-                        ) )
-                    }
+                {
+                    entriesByStatus.map( entry => (
+                        <EntryItem  key={ entry._id} entry={ entry } />
+                        
+                    ) )
+                }
             </List>
         </div>
     )
